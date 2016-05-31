@@ -11,7 +11,7 @@ import Control.Concurrent.STM.TMVar
 import Control.Concurrent.STM.TChan
 import Control.Monad
 import Control.Monad.IO.Class
-import Control.Monad.Trans.State
+import Control.Monad.Trans.State.Strict
 import System.AtomicWrite.Writer.LazyByteString
 import System.Directory
 import System.FilePath
@@ -43,7 +43,9 @@ sparkChatProcessor root queue = do
 
   where
     processChat :: StateT SerialId IO ()
-    processChat = liftIO (atomically $ readTChan queue) >>= processChatAction
+    processChat = do
+      liftIO $ putStrLn "Waiting for message..."
+      liftIO (atomically $ readTChan queue) >>= processChatAction
 
     processChatAction :: (ToJSON a, FromJSON a) => ChatAction a -> StateT SerialId IO ()
     processChatAction (Say message tmvar) = do

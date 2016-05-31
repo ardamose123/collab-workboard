@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      function tellEveryone()
+      {
+        var payload = {};
+        payload.user = $('#user').val();
+        payload.content = $('#message').val();
+
+        $.post({
+          url : 'http://localhost:9621/',
+          data: JSON.stringify(payload),
+          contentType: 'application/json',
+          success: function(serialId) {
+            console.log("Uploaded serial: " + serialId);
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div class="">
+      <input type="text" id="user" name="user" value="" placeholder="User">
+      <input type="text" id="message" name="message" value="" placeholder="Message">
+      <input type="button" value="Submit" onclick="tellEveryone();">
+    </div>
+    <div id="messages">
+
+    </div>
+  </body>
+</html>
