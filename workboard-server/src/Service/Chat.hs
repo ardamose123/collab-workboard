@@ -29,23 +29,23 @@ newChat :: IO Chat
 newChat = newTChanIO
 
 
-sparkChatProcessor :: FilePath -> Chat -> IO (STM SerialId)
-sparkChatProcessor root chat = do
-  startId  <- (fromIntegral . subtract 2 . length) <$> getDirectoryContents root
+sparkChatProcessor :: Chat -> IO (STM SerialId)
+sparkChatProcessor chat = do
+  startId  <- (fromIntegral . subtract 2 . length) <$> getDirectoryContents "."
   serialIdVar <- newTVarIO startId
   forkIO . forever $ do
     (message, serialId) <- atomically ((,) <$> readTChan chat <*> readTVar serialIdVar)
-    atomicWriteFile (root </> printf "%020u" serialId) message
+    atomicWriteFile (printf "%020u" serialId) message
     atomically (writeTVar serialIdVar $ succ serialId)
   pure (readTVar serialIdVar)
 
 
-listen :: FilePath -> STM SerialId -> SerialId -> IO BS.ByteString
-listen root readCurrentSID lastReadSID = do
+listen :: STM SerialId -> SerialId -> IO BS.ByteString
+listen readCurrentSID lastReadSID = do
   atomically $ do
     currentSID <- readCurrentSID
     guard (lastReadSID < currentSID)
-  BS.readFile (root </> printf "%020u" lastReadSID)
+  BS.readFile (printf "%020u" lastReadSID)
 
 
 tell :: Chat -> BS.ByteString -> IO ()

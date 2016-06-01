@@ -2,15 +2,14 @@
 
 module Service.Chat.Server where
 
-import Servant
-import Servant.Server
-import Network.Wai
+import Control.Concurrent.STM
+import Control.Monad.IO.Class
 import Data.Aeson
 import Data.Word
+import Network.Wai
+import Servant
+import Servant.Server
 import Service.Chat
-import Control.Monad.IO.Class
-import Network.Wai.Middleware.AddHeaders
-import Control.Concurrent.STM
 
 
 type ListenEndpoint a = Capture "serialId" SerialId :> Get '[JSON] (Maybe a)
@@ -21,14 +20,13 @@ type ChatAPI a = ListenEndpoint a :<|> TellEndpoint a
 
 data ChatConfig a = ChatConfig
   { proxy         :: Proxy (ChatAPI a)
-  , messageFolder :: FilePath
   , currentSID    :: STM SerialId
   , chat          :: Chat
   }
 
 listenEndpoint :: FromJSON a => ChatConfig a -> Server (ListenEndpoint a)
 listenEndpoint config sid = liftIO $ do
-  rawMessage <- listen (messageFolder config) (currentSID config) sid
+  rawMessage <- listen (currentSID config) sid
   pure (decode' rawMessage)
 
 tellEndpoint :: ToJSON a => ChatConfig a -> Server (TellEndpoint a)

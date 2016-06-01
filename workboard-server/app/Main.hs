@@ -3,12 +3,15 @@
 module Main where
 
 import Data.Aeson
+import Data.Maybe
 import Data.Proxy
 import GHC.Generics
 import Network.Wai
 import Network.Wai.Handler.Warp
 import Service.Chat
 import Service.Chat.Server
+import System.Directory
+import System.Environment
 
 data Message = Msg { user :: String, content :: String } deriving Generic
 
@@ -17,8 +20,9 @@ instance ToJSON   Message
 
 main :: IO ()
 main = do
-  let messageFolder = "/tmp/chat"
-  chat <- newChat
-  currentSID <- sparkChatProcessor messageFolder chat
-  let chatConfig = ChatConfig Proxy messageFolder currentSID chat :: ChatConfig Message
-  run 9621 (chatApplication chatConfig)
+  port       <- read <$> getEnv "PORT"
+  chat       <- newChat
+  currentSID <- sparkChatProcessor chat
+  let chatConfig = ChatConfig Proxy currentSID chat :: ChatConfig Message
+
+  run port (chatApplication chatConfig)

@@ -26,8 +26,6 @@ library
                       , stm
                       , transformers
                       , wai
-                      , wai-cors
-                      , wai-extra
                       , warp
   default-language:     Haskell2010
 
@@ -38,6 +36,7 @@ executable workboard-server
   build-depends:        base
                       , workboard-server
                       , aeson
+                      , directory
                       , servant-server
                       , wai
                       , warp
