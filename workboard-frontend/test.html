@@ -12,7 +12,7 @@
         payload.content = $('#message').val();
 
         $.post({
-          url : 'http://localhost/api/',
+          url : '/api/',
           data: JSON.stringify(payload),
           contentType: 'application/json',
           success: function(serialId) {
@@ -27,7 +27,7 @@
         console.log('Waiting for news...');
 
         $.get({
-          url : 'http://localhost/api/' + lastSID,
+          url : '/api/' + lastSID,
           contentType: 'application/json',
           success: function(message) {
             $('#messages').append('<div>' + message.content + '<br>(By ' + message.user + ')</div>');
