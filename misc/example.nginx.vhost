@@ -1,0 +1,15 @@
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  root WORKBOARD_FRONTEND_PATH;
+  index index.html;
+
+  location /api/ {
+    proxy_pass http://localhost:9621/;
+  }
+
+  location / {
+    try_files $uri $uri/ =404;
+  }
+}

@@ -14,20 +14,25 @@ import Data.Word
 import Service.Chat
 import Control.Monad.IO.Class
 import Network.Wai.Middleware.AddHeaders
+import Control.Concurrent.STM
 
 
-type ChatAPI a
-  =    Capture "serialId" Word64 :> Get  '[JSON] (Maybe a)
-  :<|> ReqBody '[JSON]    a      :> Post '[JSON] SerialId
-  :<|> Options ()
+type ListenEndpoint a = Capture "serialId" SerialId :> Get '[JSON] (Maybe a)
+
+type TellEndpoint a = ReqBody '[JSON] a :> Post '[JSON] ()
+
+type ChatAPI a = ListenEndpoint a :<|> TellEndpoint a
 
 
-chatServer :: Chat a -> Server (ChatAPI a)
-chatServer c = (liftIO . listen c) :<|> (liftIO . say c)
+listenEndpoint :: FromJSON a => FilePath -> STM SerialId -> Server (ListenEndpoint a)
+listenEndpoint root readSID sid = liftIO (decode' <$> listen root readSID sid)
+
+tellEndpoint :: ToJSON a => Chat -> Server (TellEndpoint a)
+tellEndpoint chat = liftIO . tell chat . encode
+
+chatServer :: (FromJSON a, ToJSON a) => FilePath -> STM SerialId -> Chat -> Server (ChatAPI a)
+chatServer root readSID chat = listenEndpoint root readSID :<|> tellEndpoint chat
 
 
-chatApplication :: (FromJSON a, ToJSON a) => Proxy (ChatAPI a) -> Chat a -> Application
-chatApplication proxy
-  = addHeaders [("Access-Control-Allow-Origin", "*")]
-  . serve proxy
-  . chatServer
+chatApplication :: (FromJSON a, ToJSON a) => FilePath -> STM SerialId -> Chat -> Proxy (ChatAPI a) -> Application
+chatApplication root readSID chat proxy = serve proxy (chatServer root readSID chat)

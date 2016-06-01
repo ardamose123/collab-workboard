@@ -17,7 +17,6 @@ instance ToJSON   Message
 
 main :: IO ()
 main = do
-  chat <- newChat :: IO (Chat Message)
-  thread <- sparkChatProcessor "/tmp/chat/" chat
-  print thread
-  run 9621 $ chatApplication (Proxy :: Proxy (ChatAPI Message)) chat
+  chat <- newChat
+  readSID <- sparkChatProcessor "/tmp/chat/" chat
+  run 9621 $ chatApplication "/tmp/chat" readSID chat (Proxy :: Proxy (ChatAPI Message))
