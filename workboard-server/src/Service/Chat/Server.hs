@@ -1,8 +1,4 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds, TypeOperators #-}
 
 module Service.Chat.Server where
 
@@ -23,16 +19,23 @@ type TellEndpoint a = ReqBody '[JSON] a :> Post '[JSON] ()
 
 type ChatAPI a = ListenEndpoint a :<|> TellEndpoint a
 
+data ChatConfig a = ChatConfig
+  { proxy         :: Proxy (ChatAPI a)
+  , messageFolder :: FilePath
+  , currentSID    :: STM SerialId
+  , chat          :: Chat
+  }
 
-listenEndpoint :: FromJSON a => FilePath -> STM SerialId -> Server (ListenEndpoint a)
-listenEndpoint root readSID sid = liftIO (decode' <$> listen root readSID sid)
+listenEndpoint :: FromJSON a => ChatConfig a -> Server (ListenEndpoint a)
+listenEndpoint config sid = liftIO $ do
+  rawMessage <- listen (messageFolder config) (currentSID config) sid
+  pure (decode' rawMessage)
 
-tellEndpoint :: ToJSON a => Chat -> Server (TellEndpoint a)
-tellEndpoint chat = liftIO . tell chat . encode
+tellEndpoint :: ToJSON a => ChatConfig a -> Server (TellEndpoint a)
+tellEndpoint config = liftIO . tell (chat config) . encode
 
-chatServer :: (FromJSON a, ToJSON a) => FilePath -> STM SerialId -> Chat -> Server (ChatAPI a)
-chatServer root readSID chat = listenEndpoint root readSID :<|> tellEndpoint chat
+chatServer :: (FromJSON a, ToJSON a) => ChatConfig a -> Server (ChatAPI a)
+chatServer config = listenEndpoint config :<|> tellEndpoint config
 
-
-chatApplication :: (FromJSON a, ToJSON a) => FilePath -> STM SerialId -> Chat -> Proxy (ChatAPI a) -> Application
-chatApplication root readSID chat proxy = serve proxy (chatServer root readSID chat)
+chatApplication :: (FromJSON a, ToJSON a) => ChatConfig a -> Application
+chatApplication config = serve (proxy config) (chatServer config)
