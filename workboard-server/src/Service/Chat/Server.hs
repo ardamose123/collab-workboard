@@ -5,10 +5,8 @@ module Service.Chat.Server where
 import Control.Concurrent.STM
 import Control.Monad.IO.Class
 import Data.Aeson
-import Data.Word
 import Network.Wai
 import Servant
-import Servant.Server
 import Service.Chat
 
 
