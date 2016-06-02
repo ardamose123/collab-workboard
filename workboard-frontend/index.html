@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alkaid Workboard 2.1</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
+  <script src="./workboard-semantic.js"></script>
+  <style>
+  input.transparent,
+  textarea.transparent
+  {
+    border-color: transparent!important;
+    background-color: transparent!important;
+    padding: 0!important;
+    box-shadow: none!important;
+  }
+
+  table.detail
+  {
+    color: #777;
+  }
+
+  table.detail td:first-child
+  {
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 2rem;
+  }
+
+  .overflow
+  {
+    color: #db2828;
+  }
+
+  .punctual
+  {
+    color: #16ab39;
+  }
+
+  .right-floated
+  {
+    float: right;
+  }
+
+  .as-is
+  {
+    white-space: pre-line;
+  }
+
+  input.right.aligned
+  {
+    text-align: right;
+  }
+
+  .ui.message .list:not(.ui) li:before
+  {
+    content: '•';
+  }
+  </style>
+</head>
+<body>
+  <nav class="ui inverted top fixed grey menu">
+    <span class="item">Workboard</span>
+  </nav>
+  <div class="ui centered stackable grid" style="padding-top: 5em;">
+    <aside class="three wide column">
+      <div class="ui blue link vertical fluid menu" id="user-list"></div>
+    </aside>
+    <section class="eleven wide column">
+      <div class="ui cards">
+        <div class="red card">
+          <div class="content">
+            <div class="ui task right floated dropdown item">
+              <i class="ui icon"></i>
+              <div class="menu">
+                <script>
+                  for (var status in statuses)
+                    document.write('<div class="item" data-value="' + status + '"><i class="' + statuses[status].icon + ' icon"></i>' + statuses[status].label + '</div>');
+                </script>
+              </div>
+            </div>
+            <div class="header">
+              <input class="transparent" placeholder="(Title)">
+            </div>
+            <div class="meta">
+              <input class="transparent" placeholder="(Project)">
+            </div>
+            <div class="description">
+              <textarea placeholder="(Description)" class="transparent" rows="1" style="width: 100%; resize: none;"></textarea>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="ui fluid transparent left icon input">
+              <i class="comment icon"></i>
+              <input type="text" placeholder="Add comment&hellip;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="ui styled fluid accordion" id="tasks">
+        <div class="title">
+          <i class="add icon"></i>
+          New activity
+        </div>
+        <div class="content">
+          <form class="ui form">
+            <div class="two fields">
+              <div class="field">
+                <label for="activityTitle">Title</label>
+                <input name="title" id="activityTitle">
+              </div>
+              <div class="field">
+                <label for="activityProject">Project</label>
+                <input name="project" id="activityProject" placeholder="(Optional)">
+              </div>
+            </div>
+            <div class="doubling fields">
+              <div class="eight wide field">
+                <label for="activityStatus">Status</label>
+                <div class="ui fluid selection dropdown">
+                  <input type="hidden" name="status" id="activityStatus">
+                  <i class="dropdown icon"></i>
+                  <div class="default text"></div>
+                  <div class="menu">
+                    <script>
+                    for (var status in statuses)
+                    document.write('<div class="item" data-value="' + status + '"><i class="' + statuses[status].icon + ' icon"></i>' + statuses[status].label + '</div>');
+                    </script>
+                  </div>
+                </div>
+              </div>
+              <div class="four wide field">
+                <label for="activitySpentTime">Spent time</label>
+                <div class="ui right labeled input">
+                  <input name="spentTime" id="activitySpentTime" class="right aligned">
+                  <div class="ui label">hrs</div>
+                </div>
+              </div>
+              <div class="four wide field">
+                <label for="activityEstimatedTime">Estimated time</label>
+                <div class="ui right labeled input">
+                  <input name="estimatedTime" id="activityEstimatedTime" class="right aligned">
+                  <div class="ui label">hrs</div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="activityDescription">Description</label>
+              <textarea name="description" id="activityDescription" rows="2"></textarea>
+            </div>
+            <div class="ui error message"></div>
+            <button class="ui primary button" type="submit">Add new activity</button>
+          </form>
+        </div>
+      </div> -->
+    </section>
+  </div>
+</body>
+</html>
