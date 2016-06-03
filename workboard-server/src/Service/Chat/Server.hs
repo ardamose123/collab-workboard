@@ -4,34 +4,31 @@ module Service.Chat.Server where
 
 import Control.Concurrent.STM
 import Control.Monad.IO.Class
-import Data.Aeson
+import Data.ByteString.Lazy
 import Network.Wai
 import Servant
 import Service.Chat
 
 
-type ListenEndpoint a = Capture "serialId" SerialId :> Get '[JSON] (Maybe a)
+type ListenEndpoint = Capture "serialId" SerialId :> Get '[OctetStream] ByteString
 
-type TellEndpoint a = ReqBody '[JSON] a :> Post '[JSON] ()
+type TellEndpoint = ReqBody '[OctetStream] ByteString :> PostAccepted '[OctetStream] NoContent
 
-type ChatAPI a = ListenEndpoint a :<|> TellEndpoint a
+type ChatAPI = ListenEndpoint :<|> TellEndpoint
 
-data ChatConfig a = ChatConfig
-  { proxy         :: Proxy (ChatAPI a)
-  , currentSID    :: STM SerialId
+data ChatConfig = ChatConfig
+  { currentSID    :: STM SerialId
   , chat          :: Chat
   }
 
-listenEndpoint :: FromJSON a => ChatConfig a -> Server (ListenEndpoint a)
-listenEndpoint config sid = liftIO $ do
-  rawMessage <- listen (currentSID config) sid
-  pure (decode' rawMessage)
+listenEndpoint :: ChatConfig -> Server ListenEndpoint
+listenEndpoint config sid = liftIO $ listen (currentSID config) sid
 
-tellEndpoint :: ToJSON a => ChatConfig a -> Server (TellEndpoint a)
-tellEndpoint config = liftIO . tell (chat config) . encode
+tellEndpoint :: ChatConfig -> Server TellEndpoint
+tellEndpoint config message = liftIO $ tell (chat config) message *> pure NoContent
 
-chatServer :: (FromJSON a, ToJSON a) => ChatConfig a -> Server (ChatAPI a)
+chatServer :: ChatConfig -> Server ChatAPI
 chatServer config = listenEndpoint config :<|> tellEndpoint config
 
-chatApplication :: (FromJSON a, ToJSON a) => ChatConfig a -> Application
-chatApplication config = serve (proxy config) (chatServer config)
+chatApplication :: ChatConfig -> Application
+chatApplication config = serve (Proxy :: Proxy ChatAPI) (chatServer config)

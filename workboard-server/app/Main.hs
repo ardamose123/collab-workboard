@@ -3,7 +3,6 @@
 module Main where
 
 import Data.Aeson
-import Data.Proxy
 import GHC.Generics
 import Network.Wai.Handler.Warp
 import Service.Chat
@@ -20,6 +19,4 @@ main = do
   port        <- read <$> getEnv "PORT"
   chat'       <- newChat
   currentSID' <- sparkChatProcessor chat'
-  let chatConfig = ChatConfig Proxy currentSID' chat' :: ChatConfig Message
-
-  run port (chatApplication chatConfig)
+  run port $ chatApplication (ChatConfig currentSID' chat')
