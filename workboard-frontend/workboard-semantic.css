@@ -1,0 +1,47 @@
+.task.card .header
+{
+  display: flex !important;
+}
+
+.task.card .header > input
+{
+  flex-grow: 1;
+}
+
+.task.card .time.description input
+{
+  text-align: center;
+  font-weight: bold;
+  width: 6ex;
+  padding: 0ex 1ex;
+  border-bottom: 1px solid rgba(34,36,38,.15);
+}
+
+.task.card .extra.content
+{
+  font-size: smaller;
+}
+
+.task.card input,
+.task.card textarea
+{
+  padding: 0em;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.overflow
+{
+  color: #db2828 !important;
+}
+
+.punctual
+{
+  color: #16ab39 !important;
+}
+
+.ui.message .list:not(.ui) li:before
+{
+  content: '•';
+}
