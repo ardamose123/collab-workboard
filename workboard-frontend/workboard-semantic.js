@@ -14,12 +14,12 @@ jQuery.fn.extend({
 });
 
 var statuses = {
-  NOT_STARTED: { label: "Not started yet"  , icon: "wait"              },
-  ONGOING    : { label: "Ongoing"          , icon: "play"              },
-  PAUSED     : { label: "Paused"           , icon: "pause"             },
-  FEEDBACK   : { label: "Awaiting feedback", icon: "help circle"       },
-  SOLVED     : { label: "Solved"           , icon: "checkmark"         },
-  CLOSED     : { label: "Closed"           , icon: "thumbs outline up" }
+  NOT_STARTED: { label: "Not started yet"  , icon: "wait"      },
+  ONGOING    : { label: "Ongoing"          , icon: "play"      },
+  PAUSED     : { label: "Paused"           , icon: "pause"     },
+  FEEDBACK   : { label: "Awaiting feedback", icon: "help"      },
+  SOLVED     : { label: "Solved"           , icon: "checkmark" },
+  CLOSED     : { label: "Closed"           , icon: "thumbs up" }
 }
 
 function prettyHour(number)
