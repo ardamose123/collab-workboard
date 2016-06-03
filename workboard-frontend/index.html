@@ -13,22 +13,32 @@
   {
     display: flex !important;
   }
-  
+
   .task.card .header > input
   {
-    flex-grow: 1; 
+    flex-grow: 1;
   }
-  
-  textarea
+
+  .task.card .time.description input
   {
-    width: 100%;
+    text-align: center;
+    width: 6ex;
+    padding: 0ex 1ex;
+    border-bottom: 1px solid rgba(34,36,38,.15);
   }
-  
+
+  .task.card .extra.content
+  {
+    font-size: smaller;
+  }
+
   .task.card input,
   .task.card textarea
   {
-    border : none;
+    padding: 0em;
+    border: none;
     outline: none;
+    width: 100%;
   }
 
   .overflow
@@ -74,6 +84,15 @@
             <div class="meta">
               <input placeholder="(Project)">
             </div>
+            <div class="time description">
+              <span>Spent</span>
+              <input type="text">
+              <span>out of</span>
+              <input type="text">
+              <span>hours</span>
+            </div>
+          </div>
+          <div class="content">
             <div class="description">
               <textarea placeholder="(Description)" rows="1" style="resize: none;"></textarea>
             </div>
