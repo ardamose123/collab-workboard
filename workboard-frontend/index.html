@@ -5,57 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Alkaid Workboard 2.1</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+  <link rel="stylesheet" href="workboard-semantic.css">
   <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
   <script src="./workboard-semantic.js"></script>
-  <style>
-  .task.card .header
-  {
-    display: flex !important;
-  }
-
-  .task.card .header > input
-  {
-    flex-grow: 1;
-  }
-
-  .task.card .time.description input
-  {
-    text-align: center;
-    width: 6ex;
-    padding: 0ex 1ex;
-    border-bottom: 1px solid rgba(34,36,38,.15);
-  }
-
-  .task.card .extra.content
-  {
-    font-size: smaller;
-  }
-
-  .task.card input,
-  .task.card textarea
-  {
-    padding: 0em;
-    border: none;
-    outline: none;
-    width: 100%;
-  }
-
-  .overflow
-  {
-    color: #db2828;
-  }
-
-  .punctual
-  {
-    color: #16ab39;
-  }
-
-  .ui.message .list:not(.ui) li:before
-  {
-    content: '•';
-  }
-  </style>
 </head>
 <body>
   <nav class="ui inverted top fixed grey menu">
@@ -65,36 +18,83 @@
     <aside class="three wide column">
       <div class="ui blue link vertical fluid menu" id="user-list"></div>
     </aside>
-    <section class="eleven wide column">
+    <section class="twelve wide column">
       <div class="ui cards">
-        <div class="red task card">
+        <div class="task card" data-id="123">
           <div class="content">
             <div class="header">
-              <input placeholder="(Title)">
+              <input name="title" placeholder="(Title)" oninput="tell(event);">
               <div class="ui task status dropdown item">
-                <i class="ui icon"></i>
+                <i class="ui wait icon"></i>
                 <div class="menu">
                   <script>
                     for (var status in statuses)
-                      document.write('<div class="item" data-value="' + status + '"><i class="' + statuses[status].icon + ' icon"></i>' + statuses[status].label + '</div>');
+                      document.write(
+                        '<div class="item" data-value="' + status + '">' +
+                          '<i class="' + statuses[status].icon + ' icon"></i>' +
+                          statuses[status].label +
+                        '</div>'
+                      );
                   </script>
                 </div>
               </div>
             </div>
             <div class="meta">
-              <input placeholder="(Project)">
+              <input name="project" placeholder="(Project or client)" oninput="tell(event);">
             </div>
             <div class="time description">
               <span>Spent</span>
-              <input type="text">
+              <input type="text" name="spentTime" oninput="updateTime(event); tell(event);">
               <span>out of</span>
-              <input type="text">
-              <span>hours</span>
+              <input type="text" name="estimatedTime" oninput="updateTime(event); tell(event);">
+              <span>hours.</span>
             </div>
           </div>
           <div class="content">
             <div class="description">
-              <textarea placeholder="(Description)" rows="1" style="resize: none;"></textarea>
+              <textarea name="description" placeholder="(Description)" rows="1" oninput="tell(event);"></textarea>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="ui fluid transparent left icon input">
+              <i class="comment icon"></i>
+              <input type="text" placeholder="Add comment&hellip;">
+            </div>
+          </div>
+        </div>
+        <div class="task card" data-id="456">
+          <div class="content">
+            <div class="header">
+              <input name="title" placeholder="(Title)" oninput="tell(event);">
+              <div class="ui task status dropdown item">
+                <i class="ui icon"></i>
+                <div class="menu">
+                  <script>
+                    for (var status in statuses)
+                      document.write(
+                        '<div class="item" data-value="' + status + '">' +
+                          '<i class="' + statuses[status].icon + ' icon"></i>' +
+                          statuses[status].label +
+                        '</div>'
+                      );
+                  </script>
+                </div>
+              </div>
+            </div>
+            <div class="meta">
+              <input name="project" placeholder="(Project or client)" oninput="tell(event);">
+            </div>
+            <div class="time description">
+              <span>Spent</span>
+              <input type="text" name="spentTime" oninput="updateTime(event); tell(event);">
+              <span>out of</span>
+              <input type="text" name="estimatedTime" oninput="updateTime(event); tell(event);">
+              <span>hours.</span>
+            </div>
+          </div>
+          <div class="content">
+            <div class="description">
+              <textarea name="description" placeholder="(Description)" rows="1" oninput="tell(event);"></textarea>
             </div>
           </div>
           <div class="extra content">
