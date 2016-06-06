@@ -22,6 +22,8 @@ var statuses = {
   CLOSED     : { label: "Closed"           , icon: "thumbs up" }
 }
 
+var user = null;
+
 function tell(event)
 {
   event.stopPropagation();
@@ -32,10 +34,11 @@ function tell(event)
   $.post({
     url: '/api/',
     data: JSON.stringify({
-      type : "task",
-      task : '456', //theTarget.closest('.task.card').data('id'),
-      field: theTarget.attr('name'),
-      value: theTarget.val()
+      type  : "task",
+      task  : '456', //theTarget.closest('.task.card').data('id'),
+      field : theTarget.attr('name'),
+      value : theTarget.val(),
+      sender: user
     }),
     contentType: 'application/octet-stream'
   });
@@ -96,21 +99,24 @@ function listenUpdates(lastSID)
   $.get({
     url: '/api/' + lastSID,
     success: function(rawInfo) {
+      listenUpdates(lastSID + 1);
+      
       var info = JSON.parse(rawInfo);
       
       if (info.type === 'task')
       {
         if (info.field === 'status')
         {
-          $('.task.card[data-id=' + info.task + '] .ui.task.dropdown').dropdown('set value', 'NOT_STARTED').dropdown('refresh');
+          var theDropdown = $('.task.card[data-id=' + info.task + '] .ui.task.dropdown');
+          theDropdown.data('remote', 'remote');
+          theDropdown.dropdown('set selected', info.value);
+          theDropdown.data('remote', 'user');
         }
         else
         {
-          $('.task.card[data-id=' + info.task + '] input[name=' + info.field + ']').val(info.value);
+          $('.task.card[data-id=' + info.task + '] *[name=' + info.field + ']').val(info.value);
         }
       }
-      
-      listenUpdates(lastSID + 1);
     }
   });
 }
@@ -123,29 +129,38 @@ $(document).ready(function()
     onChange: function(value, text, choice) {
       if (!choice)
         return;
-        
+      
+      var statusClass = 'ui ' + statuses[value].icon + ' icon';
+      
       /* Changes dropdown's *icon* to the selected one.
        * This is necessary since Semantic UI would otherwise copy the selected
        * status's *icon + text*, and that's undesirable.
        */
-      choice.closest('.ui.task.dropdown')
-            .children('i')
-            .removeClass()
-            .addClass('ui ' + statuses[value].icon + ' icon');
+      var theDropdown = choice.closest('.ui.task.dropdown');
+      theDropdown.children('i').removeClass().addClass(statusClass);
       
-      $.post({
-        url: '/api/',
-        data: JSON.stringify({
-          type : "task",
-          task : '456', //choice.closest('.task.card').data('id'),
-          field: "status",
-          value: value
-        }),
-        contentType: 'application/octet-stream'
-      });
+      if (theDropdown.data('remote') !== 'remote')
+      {
+        $.post({
+          url: '/api/',
+          data: JSON.stringify({
+            type  : 'task',
+            task  : '456', //choice.closest('.task.card').data('id'),
+            field : 'status',
+            value : value,
+            sender: user
+          }),
+          contentType: 'application/octet-stream'
+        });
+      }
     }
   });
-
+  
+  $('.ui.task.dropdown')
+    .data    ('remote'      , 'remote'     )
+    .dropdown('set selected', 'NOT_STARTED')
+    .data    ('remote'      , 'user'       );
+  
   $('textarea').autoHeight();
   listenUpdates(0);
 });
