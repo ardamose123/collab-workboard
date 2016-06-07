@@ -31,17 +31,20 @@ function tell(event)
 
   var theTarget = $(event.target);
 
-  $.post({
-    url: '/api/',
-    data: JSON.stringify({
-      type  : "task",
-      task  : '456', //theTarget.closest('.task.card').data('id'),
-      field : theTarget.attr('name'),
-      value : theTarget.val(),
-      sender: user
-    }),
-    contentType: 'application/octet-stream'
-  });
+  if (theTarget.data('remote') !== 'remote')
+  {
+    $.post({
+      url: '/api/',
+      data: JSON.stringify({
+        type  : "task",
+        task  : theTarget.closest('.task.card').data('id'),
+        field : theTarget.attr('name'),
+        value : theTarget.val(),
+        sender: user
+      }),
+      contentType: 'application/octet-stream'
+    });
+  }
 }
 
 function updateTime(event)
@@ -103,18 +106,25 @@ function listenUpdates(lastSID)
       
       var info = JSON.parse(rawInfo);
       
+      if (info.sender === user)
+        return;
+      
       if (info.type === 'task')
       {
         if (info.field === 'status')
         {
-          var theDropdown = $('.task.card[data-id=' + info.task + '] .ui.task.dropdown');
-          theDropdown.data('remote', 'remote');
-          theDropdown.dropdown('set selected', info.value);
-          theDropdown.data('remote', 'user');
+          $('.task.card[data-id=' + info.task + '] .ui.task.dropdown')
+            .data    ('remote'      , 'remote'  )
+            .dropdown('set selected', info.value)
+            .data    ('remote'      , 'user'    );
         }
         else
         {
-          $('.task.card[data-id=' + info.task + '] *[name=' + info.field + ']').val(info.value);
+          $('.task.card[data-id=' + info.task + '] *[name=' + info.field + ']')
+            .data   ('remote', 'remote')
+            .val    (info.value        )
+            .trigger('input'           )
+            .data   ('remote', 'user'  );
         }
       }
     }
@@ -145,7 +155,7 @@ $(document).ready(function()
           url: '/api/',
           data: JSON.stringify({
             type  : 'task',
-            task  : '456', //choice.closest('.task.card').data('id'),
+            task  : choice.closest('.task.card').data('id'),
             field : 'status',
             value : value,
             sender: user
