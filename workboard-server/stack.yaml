@@ -17,7 +17,7 @@ flags: {}
 extra-package-dbs: []
 
 ghc-options:
-  "*": -Wall
+  "*": -Wall -threaded
 
 # Control whether we use the GHC we find on the path
 # system-ghc: true
