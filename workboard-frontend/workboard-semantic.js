@@ -24,6 +24,40 @@ var statuses = {
 
 var user = null;
 
+var statusDropdownConfig = {
+  on: 'hover',
+  action: 'select',
+  onChange: function(value, text, choice) {
+    if (!choice)
+      return;
+
+    var statusClass = 'ui ' + statuses[value].icon + ' icon';
+
+    var theDropdown = choice.closest('.ui.task.dropdown');
+    theDropdown.children('i').removeClass().addClass(statusClass);
+
+    sendMessage(theDropdown, {
+        type  : 'task',
+        task  : choice.closest('.task.card').data('id'),
+        field : 'status',
+        value : value,
+        sender: user
+      });
+  }
+};
+
+function sendMessage(origin, message)
+{
+  if (origin.data('remote') !== 'remote')
+  {
+    $.post({
+      url: '/api/',
+      data: JSON.stringify(message),
+      contentType: 'application/octet-stream'
+    });
+  }
+}
+
 function tell(event)
 {
   event.stopPropagation();
@@ -31,20 +65,13 @@ function tell(event)
 
   var theTarget = $(event.target);
 
-  if (theTarget.data('remote') !== 'remote')
-  {
-    $.post({
-      url: '/api/',
-      data: JSON.stringify({
-        type  : "task",
-        task  : theTarget.closest('.task.card').data('id'),
-        field : theTarget.attr('name'),
-        value : theTarget.val(),
-        sender: user
-      }),
-      contentType: 'application/octet-stream'
-    });
-  }
+  sendMessage(theTarget, {
+    type  : "task",
+    task  : theTarget.closest('.task.card').data('id'),
+    field : theTarget.attr('name'),
+    value : theTarget.val(),
+    sender: user
+  });
 }
 
 function updateTime(event)
@@ -79,6 +106,8 @@ $(window).keydown(function(event)
     {
       event.stopPropagation();
       event.preventDefault();
+
+      createTask();
     }
 
     // Alt + [0-9]: toggle the corresponding activity.
@@ -133,11 +162,19 @@ function listenUpdates(lastSID)
 
 function createTask()
 {
-  $('.templates .task.card')
-    .clone(true)
-    .attr('data-id', Math.random().toString())
-    .appendTo('.ui.cards')
-    .transition('scale');
+  var theClone = $('.templates .task.card').clone();
+
+  theClone.find('.ui.task.dropdown')
+          .dropdown(statusDropdownConfig)
+          .data    ('remote'      , 'remote'     )
+          .dropdown('set selected', 'NOT_STARTED')
+          .data    ('remote'      , 'user'       );
+
+  theClone.find('textarea').autoHeight();
+
+  theClone.attr('data-id', Math.random().toString())
+          .appendTo('.ui.cards')
+          .transition('scale');
 }
 
 function removeTask(event)
@@ -147,44 +184,5 @@ function removeTask(event)
 
 $(document).ready(function()
 {
-  $('.ui.task.dropdown').dropdown({
-    on: 'hover',
-    action: 'select',
-    onChange: function(value, text, choice) {
-      if (!choice)
-        return;
-
-      var statusClass = 'ui ' + statuses[value].icon + ' icon';
-
-      /* Changes dropdown's *icon* to the selected one.
-       * This is necessary since Semantic UI would otherwise copy the selected
-       * status's *icon + text*, and that's undesirable.
-       */
-      var theDropdown = choice.closest('.ui.task.dropdown');
-      theDropdown.children('i').removeClass().addClass(statusClass);
-
-      if (theDropdown.data('remote') !== 'remote')
-      {
-        $.post({
-          url: '/api/',
-          data: JSON.stringify({
-            type  : 'task',
-            task  : choice.closest('.task.card').data('id'),
-            field : 'status',
-            value : value,
-            sender: user
-          }),
-          contentType: 'application/octet-stream'
-        });
-      }
-    }
-  });
-
-  $('.ui.task.dropdown')
-    .data    ('remote'      , 'remote'     )
-    .dropdown('set selected', 'NOT_STARTED')
-    .data    ('remote'      , 'user'       );
-
-  $('textarea').autoHeight();
   listenUpdates(0);
 });

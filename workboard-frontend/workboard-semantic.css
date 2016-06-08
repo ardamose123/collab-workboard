@@ -31,6 +31,11 @@
   width: 100%;
 }
 
+textarea
+{
+  min-height: 1.2em;
+}
+
 .overflow
 {
   color: #db2828 !important;
