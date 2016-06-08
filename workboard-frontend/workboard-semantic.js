@@ -103,12 +103,12 @@ function listenUpdates(lastSID)
     url: '/api/' + lastSID,
     success: function(rawInfo) {
       listenUpdates(lastSID + 1);
-      
+
       var info = JSON.parse(rawInfo);
-      
+
       if (info.sender === user)
         return;
-      
+
       if (info.type === 'task')
       {
         if (info.field === 'status')
@@ -131,6 +131,20 @@ function listenUpdates(lastSID)
   });
 }
 
+function createTask()
+{
+  $('.templates .task.card')
+    .clone(true)
+    .attr('data-id', Math.random().toString())
+    .appendTo('.ui.cards')
+    .transition('scale');
+}
+
+function removeTask(event)
+{
+  $(event.target).closest('.task.card').remove();
+}
+
 $(document).ready(function()
 {
   $('.ui.task.dropdown').dropdown({
@@ -139,16 +153,16 @@ $(document).ready(function()
     onChange: function(value, text, choice) {
       if (!choice)
         return;
-      
+
       var statusClass = 'ui ' + statuses[value].icon + ' icon';
-      
+
       /* Changes dropdown's *icon* to the selected one.
        * This is necessary since Semantic UI would otherwise copy the selected
        * status's *icon + text*, and that's undesirable.
        */
       var theDropdown = choice.closest('.ui.task.dropdown');
       theDropdown.children('i').removeClass().addClass(statusClass);
-      
+
       if (theDropdown.data('remote') !== 'remote')
       {
         $.post({
@@ -165,12 +179,12 @@ $(document).ready(function()
       }
     }
   });
-  
+
   $('.ui.task.dropdown')
     .data    ('remote'      , 'remote'     )
     .dropdown('set selected', 'NOT_STARTED')
     .data    ('remote'      , 'user'       );
-  
+
   $('textarea').autoHeight();
   listenUpdates(0);
 });
