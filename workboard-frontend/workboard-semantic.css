@@ -41,6 +41,11 @@
   color: #16ab39 !important;
 }
 
+.templates
+{
+  display: none;
+}
+
 .ui.message .list:not(.ui) li:before
 {
   content: '•';

@@ -19,93 +19,52 @@
       <div class="ui blue link vertical fluid menu" id="user-list"></div>
     </aside>
     <section class="twelve wide column">
-      <div class="ui cards">
-        <div class="task card" data-id="123">
-          <div class="content">
-            <div class="header">
-              <input name="title" placeholder="(Title)" oninput="tell(event);">
-              <div class="ui task status dropdown item">
-                <i class="ui icon"></i>
-                <div class="menu">
-                  <script>
-                    for (var status in statuses)
-                      document.write(
-                        '<div class="item" data-value="' + status + '">' +
-                          '<i class="' + statuses[status].icon + ' icon"></i>' +
-                          statuses[status].label +
-                        '</div>'
-                      );
-                  </script>
-                </div>
-              </div>
-            </div>
-            <div class="meta">
-              <input name="project" placeholder="(Project or client)" oninput="tell(event);">
-            </div>
-            <div class="time description">
-              <span>Spent</span>
-              <input type="text" name="spentTime" oninput="updateTime(event); tell(event);">
-              <span>out of</span>
-              <input type="text" name="estimatedTime" oninput="updateTime(event); tell(event);">
-              <span>hours.</span>
-            </div>
-          </div>
-          <div class="content">
-            <div class="description">
-              <textarea name="description" placeholder="(Description)" rows="1" oninput="tell(event);"></textarea>
-            </div>
-          </div>
-          <div class="extra content">
-            <div class="ui fluid transparent left icon input">
-              <i class="comment icon"></i>
-              <input type="text" placeholder="Add comment&hellip;">
-            </div>
-          </div>
-        </div>
-        <div class="task card" data-id="456">
-          <div class="content">
-            <div class="header">
-              <input name="title" placeholder="(Title)" oninput="tell(event);">
-              <div class="ui task status dropdown item">
-                <i class="ui icon"></i>
-                <div class="menu">
-                  <script>
-                    for (var status in statuses)
-                      document.write(
-                        '<div class="item" data-value="' + status + '">' +
-                          '<i class="' + statuses[status].icon + ' icon"></i>' +
-                          statuses[status].label +
-                        '</div>'
-                      );
-                  </script>
-                </div>
-              </div>
-            </div>
-            <div class="meta">
-              <input name="project" placeholder="(Project or client)" oninput="tell(event);">
-            </div>
-            <div class="time description">
-              <span>Spent</span>
-              <input type="text" name="spentTime" oninput="updateTime(event); tell(event);">
-              <span>out of</span>
-              <input type="text" name="estimatedTime" oninput="updateTime(event); tell(event);">
-              <span>hours.</span>
-            </div>
-          </div>
-          <div class="content">
-            <div class="description">
-              <textarea name="description" placeholder="(Description)" rows="1" oninput="tell(event);"></textarea>
-            </div>
-          </div>
-          <div class="extra content">
-            <div class="ui fluid transparent left icon input">
-              <i class="comment icon"></i>
-              <input type="text" placeholder="Add comment&hellip;">
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="ui cards"></div>
     </section>
   </div>
+  <aside class="templates">
+    <div class="hidden transition task card" data-id="">
+      <div class="content">
+        <div class="header">
+          <input name="title" placeholder="(Title)" oninput="tell(event);">
+          <div class="ui task status dropdown item">
+            <i class="ui icon"></i>
+            <div class="menu">
+              <script>
+                for (var status in statuses)
+                  document.write(
+                    '<div class="item" data-value="' + status + '">' +
+                      '<i class="' + statuses[status].icon + ' icon"></i>' +
+                      statuses[status].label +
+                    '</div>'
+                  );
+              </script>
+            </div>
+          </div>
+        </div>
+        <div class="meta">
+          <input name="project" placeholder="(Project or client)" oninput="tell(event);">
+        </div>
+        <div class="time description">
+          <span>Spent</span>
+          <input type="text" name="spentTime" oninput="updateTime(event); tell(event);">
+          <span>out of</span>
+          <input type="text" name="estimatedTime" oninput="updateTime(event); tell(event);">
+          <span>hours.</span>
+        </div>
+      </div>
+      <div class="content">
+        <div class="description">
+          <textarea name="description" placeholder="(Description)" rows="1" oninput="tell(event);"></textarea>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui fluid transparent left icon input">
+          <i class="comment icon"></i>
+          <input type="text" placeholder="Add comment&hellip;">
+        </div>
+      </div>
+    </div>
+  </aside>
 </body>
 </html>
